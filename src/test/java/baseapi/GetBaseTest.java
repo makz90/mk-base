@@ -10,9 +10,14 @@ import static org.junit.Assert.assertEquals;
 public class GetBaseTest extends FunctionalTest{
 
     @Test
-    public void CreateLeadTest(){
+    public void createLeadTest(){
 
-        baseClient.leads().create(new Lead());
+        Lead newLead = new Lead();
+
+        newLead.setFirstName("TestFirstName");
+        newLead.setLastName("TestLastName");
+
+        baseClient.leads().create(newLead);
 
         List<Lead> leadList = baseClient.leads().list(new LeadsService.SearchCriteria());
 
