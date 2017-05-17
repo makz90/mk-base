@@ -39,7 +39,7 @@ public class GetBaseTest extends FunctionalTest{
         // Update changes to dB
         baseClient.leads().update(newLead);
         leadList = baseClient.leads().list(new LeadsService.SearchCriteria());
-        await().atMost(5, SECONDS).until(() -> leadList.size() == 1);
+        await().atMost(5, SECONDS).until(() -> leadList.get(0).getStatus() == "Working");
 
         assertEquals("Check if the status name change is reflected.", "Working", leadList.get(0).getStatus());
     }
