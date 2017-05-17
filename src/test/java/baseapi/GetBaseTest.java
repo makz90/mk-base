@@ -2,41 +2,45 @@ package baseapi;
 
 import com.getbase.models.Lead;
 import com.getbase.services.LeadsService;
-import org.junit.After;
 import org.junit.Test;
+
+import java.util.Calendar;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 
 public class GetBaseTest extends FunctionalTest{
 
-    private List<Lead> leadList = baseClient.leads().list(new LeadsService.SearchCriteria());
-
-    @After
-    public void cleanUpLeads(){
-        System.out.println("Leads cleanup (delete all)");
-        for (Lead lead : leadList) {
-            baseClient.leads().delete(lead.getId());
-        }
-    }
+    private List<Lead> leadList;
 
     @Test
-    public void createLeadTest(){
-        Lead newLead = new Lead();
-        newLead.setFirstName("TestFirstName");
-        newLead.setLastName("TestLastName");
+    public void createAndModifyLead(){
 
+        // Create new lead
+        Lead newLead = new Lead();
+        newLead.setFirstName("Created at ");
+        newLead.setLastName(Calendar.getInstance().getTime().toString());
+
+        // Add newly created lead to dB
         baseClient.leads().create(newLead);
 
-        await().atMost(60, SECONDS).until(leadList::size, equalTo(1));
+        // Wait for at most 5 seconds until dB gets updated
+        leadList = baseClient.leads().list(new LeadsService.SearchCriteria());
+        await().atMost(5, SECONDS).until(() -> leadList.size() == 1);
 
         assertEquals("Create a new Lead.",1, leadList.size());
         assertEquals("Check that the Lead status is set to \"New\".", "New", leadList.get(0).getStatus());
 
-        leadList.get(0).setStatus("Working");
+        // Change lead status from New to Working
+        newLead.setStatus("Working");
+
+        // Update changes to dB
+        baseClient.leads().update(newLead);
+        leadList = baseClient.leads().list(new LeadsService.SearchCriteria());
+        await().atMost(5, SECONDS).until(() -> leadList.size() == 1);
+
         assertEquals("Check if the status name change is reflected.", "Working", leadList.get(0).getStatus());
     }
 

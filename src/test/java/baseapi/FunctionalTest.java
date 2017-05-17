@@ -2,7 +2,11 @@ package baseapi;
 
 import com.getbase.Client;
 import com.getbase.Configuration;
+import com.getbase.models.Lead;
+import com.getbase.services.LeadsService;
 import org.junit.BeforeClass;
+
+import java.util.List;
 
 public class FunctionalTest {
 
@@ -15,6 +19,13 @@ public class FunctionalTest {
                 .accessToken(token)
                 .verbose()
                 .build());
+
+        System.out.println("Cleaning Up Lead Data:");
+        List<Lead> leadList = baseClient.leads().list(new LeadsService.SearchCriteria());
+        for (Lead lead : leadList) {
+            System.out.println("deleting: " + lead.getLastName());
+            baseClient.leads().delete(lead.getId());
+        }
     }
 
 }
