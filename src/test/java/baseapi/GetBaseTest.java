@@ -16,7 +16,7 @@ public class GetBaseTest extends FunctionalTest{
     private List<Lead> leadList;
 
     @Test
-    public void createAndModifyLead(){
+    public void createAndModifyLeadTest(){
 
         // Create new lead
         Lead newLead = new Lead();
