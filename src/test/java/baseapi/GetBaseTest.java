@@ -29,18 +29,18 @@ public class GetBaseTest extends FunctionalTest{
 
         // Wait for at most 5 seconds until dB gets updated
         firstLeadList = baseClient.leads().list(new LeadsService.SearchCriteria());
-        await().atMost(5, SECONDS).until(() -> firstLeadList.size() == 1);
+        await().atMost(10, SECONDS).until(() -> firstLeadList.size() == 1);
 
         assertEquals("Create a new Lead.",1, firstLeadList.size());
         assertEquals("Check that the Lead status is set to \"New\".", "New", firstLeadList.get(0).getStatus());
 
         // Change lead status from New to Working
-        newLead.setStatus("Working");
+        firstLeadList.get(0).setStatus("Working");
 
         // Update changes to dB
-        baseClient.leads().update(newLead);
+        baseClient.leads().update(firstLeadList.get(0));
         updatedLeadList = baseClient.leads().list(new LeadsService.SearchCriteria());
-        await().atMost(5, SECONDS).until(() -> updatedLeadList.get(0).getStatus() == "Working");
+        await().atMost(10, SECONDS).until(() -> updatedLeadList.get(0).getStatus() == "Working");
 
         assertEquals("Check if the status name change is reflected.", "Working", updatedLeadList.get(0).getStatus());
     }
