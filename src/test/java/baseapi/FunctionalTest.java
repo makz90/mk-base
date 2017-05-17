@@ -10,10 +10,10 @@ import java.util.List;
 
 public class FunctionalTest {
 
-    static Client baseClient;
+    protected Client baseClient;
 
     @BeforeClass
-    public static void setup() {
+    public void setup() {
         String token = "32a3f51cc34cee6344f7625ddb66d27d8c7467ab609e47bac34e1b1fc2bd0d17";
         baseClient = new Client(new Configuration.Builder()
                 .accessToken(token)
